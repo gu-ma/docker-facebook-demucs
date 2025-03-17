@@ -2,20 +2,18 @@ services:
   demucs:
     container_name: demucs
     image: xserrat/facebook-demucs:latest
-    build:
-      context: .
-      args:
-        - gpu=${GPU}
+    build: .
     volumes:
+      - ./gradio:/app
       - ./input:/data/input
       - ./output:/data/output
       - ./models:/data/models
       - ${HF_HOME}:/root/.cache/huggingface
-      - ${TORCH_HOME}:/root/.cache/torch
+      - ${TORCH_HOME}:/root/.cache/torch    
     ports:
-      - ${DEMUCS_PORT}:6969
+      - ${DEMUCS_PORT}:7860
     working_dir: /lib/demucs
-    command: ['/bin/bash', '--login', '-c']
+    entrypoint: ['python3', '/app/app.py']
     tty: true
     deploy:
       resources:

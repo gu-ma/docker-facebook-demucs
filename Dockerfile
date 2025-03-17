@@ -2,7 +2,6 @@
 FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
 
 USER root
-# ENV TORCH_HOME=/data/models
 ENV OMP_NUM_THREADS=1
 
 # Install required tools
@@ -28,15 +27,16 @@ WORKDIR /lib/demucs
 RUN git checkout b9ab48cad45976ba42b2ff17b229c071f0df9390
 
 # Install specific versions of torch, torchvision and torchaudio
-# If the 'gpu' build argument is true, install CUDA-enabled packages from PyTorch's cu118 index URL
-ARG gpu
-RUN pip install torch==2.0.0 torchvision==0.15.1 torchaudio==2.0.1 \
-    $( [ "$gpu" = "true" ] && echo "--index-url https://download.pytorch.org/whl/cu118" )
+RUN pip install torch==2.0.0 torchvision==0.15.1 torchaudio==2.0.1 --index-url https://download.pytorch.org/whl/cu118
+
 # Install requirements
 RUN pip install -r requirements.txt
 
 # Downgrade numpy
 RUN pip install -U "numpy<2"
+
+# Install gradio
+RUN pip install gradio
 
 # Run once to ensure demucs works and trigger the default model download
 RUN python3 -m demucs -d cpu test.mp3 
@@ -46,5 +46,3 @@ RUN rm -r separated
 VOLUME /data/input
 VOLUME /data/output
 VOLUME /data/models
-
-ENTRYPOINT ["/bin/bash", "--login", "-c"]
