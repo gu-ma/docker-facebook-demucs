@@ -2,7 +2,7 @@ SHELL = /bin/sh
 current-dir := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 # Default options
-gpu = false
+gpu = true
 mp3output = false
 model = htdemucs
 shifts = 1
@@ -14,9 +14,7 @@ splittrack =
 
 .PHONY:
 init:
-ifeq ($(gpu), true)
-  docker-gpu-option = --gpus all
-endif
+export GPU=$(gpu)
 ifeq ($(mp3output), true)
   demucs-mp3-option = --mp3
 endif
@@ -25,18 +23,10 @@ ifneq ($(splittrack),)
 endif
 
 # Build commands
-docker-build-command = docker build -t xserrat/facebook-demucs:latest \
-	--build-arg gpu=$(gpu) \
-	.
+docker-build-command = docker compose build
 
 # Construct commands
-docker-run-command = docker run --rm -i \
-	--name=demucs \
-	$(docker-gpu-option) \
-	-v $(current-dir)input:/data/input \
-	-v $(current-dir)output:/data/output \
-	-v $(current-dir)models:/data/models \
-	xserrat/facebook-demucs:latest
+docker-run-command = docker compose run --rm demucs
 
 demucs-command = "python3 -m demucs -n $(model) \
 	--out /data/output \

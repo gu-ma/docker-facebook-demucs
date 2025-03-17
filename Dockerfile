@@ -1,10 +1,8 @@
 # Base image supports Nvidia CUDA but does not require it and can also run demucs on the CPU
 FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
 
-ARG gpu
-
 USER root
-ENV TORCH_HOME=/data/models
+# ENV TORCH_HOME=/data/models
 ENV OMP_NUM_THREADS=1
 
 # Install required tools
@@ -29,10 +27,11 @@ WORKDIR /lib/demucs
 # Checkout known stable commit on main
 RUN git checkout b9ab48cad45976ba42b2ff17b229c071f0df9390
 
-# Install torch known working version on this base image
+# Install specific versions of torch, torchvision and torchaudio
+# If the 'gpu' build argument is true, install CUDA-enabled packages from PyTorch's cu118 index URL
+ARG gpu
 RUN pip install torch==2.0.0 torchvision==0.15.1 torchaudio==2.0.1 \
     $( [ "$gpu" = "true" ] && echo "--index-url https://download.pytorch.org/whl/cu118" )
-
 # Install requirements
 RUN pip install -r requirements.txt
 

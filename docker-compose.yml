@@ -1,0 +1,26 @@
+services:
+  demucs:
+    container_name: demucs
+    image: xserrat/facebook-demucs:latest
+    build:
+      context: .
+      args:
+        - gpu=${GPU}
+    volumes:
+      - ./input:/data/input
+      - ./output:/data/output
+      - ./models:/data/models
+      - ${HF_HOME}:/root/.cache/huggingface
+      - ${TORCH_HOME}:/root/.cache/torch
+    ports:
+      - ${DEMUCS_PORT}:6969
+    working_dir: /lib/demucs
+    command: ['/bin/bash', '--login', '-c']
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

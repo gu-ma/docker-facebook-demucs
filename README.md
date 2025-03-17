@@ -5,7 +5,7 @@ to split music tracks into different tracks (bass, drums, voice, others).
 ## Usage
 ### Clone this repository
 ```bash
-git clone https://github.com/xserrat/docker-facebook-demucs.git demucs
+git clone https://github.com/gu-ma/docker-facebook-demucs.git demucs
 ```
 ### Split a music track
 1. Copy the track you want to split into the `input` folder (e.g., `input/mysong.mp3`).
@@ -64,7 +64,7 @@ make run-no-build track=mysong.mp3
 
 The Docker image can be built locally via the `build` job:
 ```bash
-make build
+make build gpu=true
 ```
 
 ## License
