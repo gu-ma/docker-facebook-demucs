@@ -1,6 +1,7 @@
+name: docker-misc-${CONTAINER_NAME}
 services:
   demucs:
-    container_name: demucs
+    container_name: ${CONTAINER_NAME}
     image: xserrat/facebook-demucs:latest
     build: .
     volumes:
